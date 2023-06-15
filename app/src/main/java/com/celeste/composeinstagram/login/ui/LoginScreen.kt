@@ -22,6 +22,7 @@ import androidx.compose.material.icons.filled.Visibility
 import androidx.compose.material.icons.filled.VisibilityOff
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Divider
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
@@ -57,9 +58,22 @@ fun LoginScreen(loginViewModel: LoginViewModel) {
             .fillMaxSize()
             .padding(8.dp)
     ) {
-        Header(Modifier.align(Alignment.TopEnd))
-        Body(Modifier.align(Alignment.Center), loginViewModel)
-        Footer(Modifier.align(Alignment.BottomCenter))
+        val isLoading by loginViewModel.isLoading.observeAsState(false)
+
+        if(isLoading) {
+           Box(modifier = Modifier
+               .fillMaxSize()
+               .align(Alignment.Center),
+               contentAlignment = Alignment.Center
+           ){
+               CircularProgressIndicator()
+           }
+        } else {
+            Header(Modifier.align(Alignment.TopEnd))
+            Body(Modifier.align(Alignment.Center), loginViewModel)
+            Footer(Modifier.align(Alignment.BottomCenter))
+        }
+
     }
 }
 
@@ -191,11 +205,12 @@ fun ForgotPassword(modifier: Modifier) {
 }
 
 @Composable
-fun LoginButton(loginEnabled: Boolean) {
+fun LoginButton(loginEnabled: Boolean, loginViewModel: LoginViewModel) {
     Button(
         shape = RoundedCornerShape(12),
         modifier = Modifier.fillMaxWidth(),
-        onClick = { }, enabled = loginEnabled,
+        onClick = { loginViewModel.onLoginClick() },
+        enabled = loginEnabled,
         colors = ButtonDefaults.buttonColors(
             containerColor = Color(0xFF4EA8E9),
             disabledContainerColor = Color(0xFF78C8F9),
@@ -273,7 +288,7 @@ fun Body(modifier: Modifier, loginViewModel: LoginViewModel) {
         Spacer(modifier = Modifier.size(8.dp))
         ForgotPassword(Modifier.align(Alignment.End))
         Spacer(modifier = Modifier.size(16.dp))
-        LoginButton(loginEnabled = isLoginEnable)
+        LoginButton(loginEnabled = isLoginEnable, loginViewModel)
         Spacer(modifier = Modifier.size(16.dp))
         LoginDivider()
         Spacer(modifier = Modifier.size(32.dp))
