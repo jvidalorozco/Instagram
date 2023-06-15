@@ -1,16 +1,16 @@
 package com.celeste.composeinstagram.login.data.network
 
-import com.celeste.composeinstagram.core.network.RetrofitHelper
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
+import retrofit2.Retrofit
+import javax.inject.Inject
 
-class LoginService {
-    private val retrofit = RetrofitHelper.getRetrofit()
-
+class LoginService @Inject constructor(
+    private val loginClient: LoginClient
+) {
     suspend fun doLogin(user: String, password: String): Boolean {
         return withContext(context = Dispatchers.IO) {
-            retrofit.create(LoginClient::class.java)
-                .doLogin()
+            loginClient.doLogin()
                 .body()?.success ?: false
         }
     }
